@@ -19,6 +19,18 @@
 //		printf("RED LED ON\n");	 // printf solamente para debuggear (con el primer #define).
 //#endif
 
+#define Delay_3s 	3		 /** Ventana de tiempo para checar SW2 */
+
+typedef enum {
+	Apagado,	Arranque,
+	Azul,
+	Verde,
+	Rojo,
+	Amarillo,
+	Morado,
+	Naranja,
+} State_t;
+
 
 
 int main(void) {
@@ -37,10 +49,43 @@ int main(void) {
 
 	uint8_t state_sw2 = 0;
 	uint8_t state_sw3 = 0;
+	static State_t current_state = Apagado;			// Estado inicial del sistema
+
+	PIT_delay(PIT_0, SYSTEM_CLOCK, Delay_Password);
+	PIT_delay(PIT_1, SYSTEM_CLOCK, Delay_Password);
 
 	while (1) {
 
+		state_sw2 = GPIO_get_irq_status(GPIO_C);	// Se lee si se presiono SW2
 
+
+
+		if (state_sw2) {
+			GPIO_clear_irq_status(GPIO_C);
+		}
+
+		switch (current_state) {
+		case Apagado:
+			if (intento) {
+				current_state = waitSELECT_PROCESO;
+				printf("\nCLAVE_MAESTRA correcta!");
+				GPIO_set_pin(GPIO_B, bit_18); /** Power On: GREEN LED */
+			}
+			break; // end case waitCLAVE_MAESTRA
+
+		case stop_MOTOR:
+			g_FSM_status_flags.flag_FSM_MOTOR = FALSE;// Desactivacion de FSM Motor
+			current_state = waitSELECT_PROCESO;
+			break;	// end case stop_MOTOR
+
+		default:
+			break;
+		} //end switch(current state)
+
+
+
+
+		state_sw3 = GPIO_get_irq_status(GPIO_A);	// Se lee si se presiono SW3
 
 
 
