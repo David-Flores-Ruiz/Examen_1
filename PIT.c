@@ -91,8 +91,8 @@ void PIT_delay(PIT_timer_t pit_timer, uint32_t system_clock, My_float_pit_t dela
 void PIT_stop(PIT_timer_t pit_timer)
 {
 	if (PIT_0 == pit_timer) {
-		PIT->CHANNEL[pit_timer].TCTRL = PIT_TCTRL_TEN_SHIFT; /** Apaga bit TIE y se apagan interrupciones */
-//		PIT->CHANNEL[pit_timer].TCTRL &= ~(PIT_TCTRL_TEN_SHIFT); /** Apaga bit TEN y se deshabilita el timer  */
+		PIT->CHANNEL[pit_timer].TCTRL &= ~(PIT_TCTRL_TIE_SHIFT); /** Apaga bit TIE y se apagan interrupciones */
+		PIT->CHANNEL[pit_timer].TCTRL &= ~(PIT_TCTRL_TEN_SHIFT); /** Apaga bit TEN y se deshabilita el timer  */
 		}
 		if (PIT_1 == pit_timer) {
 		PIT->CHANNEL[pit_timer].TCTRL &= ~(PIT_TCTRL_TIE_SHIFT);

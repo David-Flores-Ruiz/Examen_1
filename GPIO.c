@@ -8,7 +8,6 @@
 	\date	18/02/2019
 	    Interrupts are not implemented in this API implementation.
  */
-#include "Teclado.h"
 #include "MK64F12.h"
 #include "GPIO.h"
 #include "bits.h"
@@ -90,15 +89,6 @@ void PORTA_IRQHandler(void)
 {
 	g_intr_status_flag.flag_port_a = TRUE; // bandera de SW de SW3
 	GPIO_clear_interrupt(GPIO_A);
-}
-void PORTB_IRQHandler(void)
-{
-	if(gpio_B_callback)
-	{
-		gpio_B_callback();	// Función del teclado
-	}
-
-	GPIO_clear_interrupt(GPIO_B);
 }
 
 void PORTC_IRQHandler(void) {

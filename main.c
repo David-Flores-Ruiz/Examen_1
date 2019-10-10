@@ -7,26 +7,43 @@
 #include <stdio.h>
 #include "MK64F12.h"
 
+#include "GPIO.h"
+#include "NVIC.h"
+#include "PIT.h"
+#include "RGB.h"
+#include "bits.h"
+
 // #define DEBUG_ON
 
-int main(void) {
+//#ifndef DEBUG_ON
+//		printf("RED LED ON\n");	 // printf solamente para debuggear (con el primer #define).
+//#endif
 
-	SIM->SCGC5 = 0x400;			 // Enciendo bit #10 de "clock gating" del Port B.
-	PORTB->PCR[22] = 0x00000100; // RED - Config. PCR en MUX como 001 - Alternative 1 (GPIO).
-	GPIOB->PDOR = 0x00400000;	 // OFF - Antes de encender le asigno una valor lógico.
-	GPIOB->PDDR = 0x00400000;	 // Output - Pongo el pin22 como salida.
+
+
+int main(void) {
+	RGB_init();
+	SW_init();
+	PIT_init();
+
+	/**Sets the threshold for interrupts, if the interrupt has higher priority constant that the BASEPRI, the interrupt will not be attended*/
+	//NVIC_set_basepri_threshold(PRIORITY_10);
+	/**Enables and sets a particular interrupt and its priority*/
+	NVIC_enable_interrupt_and_priotity(PIT_CH0_IRQ, PRIORITY_10);
+	NVIC_enable_interrupt_and_priotity(PIT_CH1_IRQ, PRIORITY_10);
+	NVIC_enable_interrupt_and_priotity(PORTC_IRQ,PRIORITY_10);	// sw2
+	NVIC_enable_interrupt_and_priotity(PORTA_IRQ,PRIORITY_10);	// sw3
+	NVIC_global_enable_interrupts;
+
+	uint8_t state_sw2 = 0;
+	uint8_t state_sw3 = 0;
 
 	while (1) {
-		GPIOB->PDOR = 0;		 // ON - Clear pin 22, el Led enciende.
-#ifndef DEBUG_ON
-		printf("RED LED ON\n");	 // printf solamente para debuggear (con el primer #define).
-#endif
 
-		GPIOB->PDOR = 0x00400000;// OFF - Los LEDs prenden con 0 y apagan con 1.
 
-#ifndef DEBUG_ON
-		printf("RED LED OFF\n");
-#endif
+
+
+
 	}
 	return 0;
 
